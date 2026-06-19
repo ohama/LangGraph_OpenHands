@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
+from orchestrator.api.routes import router
 from orchestrator.graph.stub_graph import build_stub_graph
 from orchestrator.persistence.job_store import init_jobs_db
 from orchestrator.worker.runner import worker_loop
@@ -82,8 +83,7 @@ async def lifespan(app: FastAPI):
     # closing the aiosqlite connection cleanly after the worker has stopped.
 
 
-# FastAPI application instance.
-# Routes are NOT registered here — 01-03 wires them via:
-#   from orchestrator.api.routes import router
-#   app.include_router(router)    # <-- TODO(01-03): add routes here
+# FastAPI application instance with all REST routes mounted.
+# Routes are provided by orchestrator/api/routes.py (01-03).
 app = FastAPI(lifespan=lifespan)
+app.include_router(router)

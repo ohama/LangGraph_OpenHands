@@ -26,8 +26,6 @@ from orchestrator.worker.runner import worker_loop
 
 load_dotenv()
 
-DATA_DIR: str = os.environ.get("DATA_DIR", "data")
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,16 +38,23 @@ async def lifespan(app: FastAPI):
     Control transfer to FastAPI is placed INSIDE the `async with` block (RESEARCH
     Pitfall 1 — see module docstring). Exiting the `async with` block on shutdown
     closes the aiosqlite connection cleanly.
+
+    DATA_DIR is read at lifespan startup time (not module-import time) so that
+    tests can override the DATA_DIR environment variable before entering the
+    TestClient context.
     """
+    # Read DATA_DIR at startup so env-override in tests takes effect.
+    data_dir: str = os.environ.get("DATA_DIR", "data")
+
     # 1. Ensure jobs.db schema exists before anything reads or writes it.
-    os.makedirs(DATA_DIR, exist_ok=True)
-    await init_jobs_db(f"{DATA_DIR}/jobs.db")
+    os.makedirs(data_dir, exist_ok=True)
+    await init_jobs_db(f"{data_dir}/jobs.db")
 
     # 2. Open AsyncSqliteSaver.  from_conn_string() is an @asynccontextmanager —
     #    the aiosqlite connection lives for the duration of this `async with` block.
     #    Control MUST be transferred (via the keyword below) inside this block.
     async with AsyncSqliteSaver.from_conn_string(
-        f"{DATA_DIR}/checkpoints.db"
+        f"{data_dir}/checkpoints.db"
     ) as saver:
         # Explicit setup call — setup() is auto-called on first op via is_setup guard,
         # but calling it here ensures the checkpoint schema exists before any graph run.
@@ -66,7 +71,7 @@ async def lifespan(app: FastAPI):
         app.state.job_queue = job_queue
 
         worker_task = asyncio.create_task(
-            worker_loop(job_queue, graph, f"{DATA_DIR}/jobs.db")
+            worker_loop(job_queue, graph, f"{data_dir}/jobs.db")
         )
 
         # ---- SERVE: control transferred to FastAPI (INSIDE async with — Pitfall 1) ----

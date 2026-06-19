@@ -29,12 +29,12 @@ Build a single-process, always-on macOS service that takes a goal, runs it throu
   3. After killing and restarting the process, a previously submitted job's status and checkpoint are still readable from `jobs.db` and `checkpoints.db` — no data loss on restart.
   4. `GET /health` returns 200 with SQLite liveness confirmed.
   5. A per-run log file is created for each job and contains timestamped node-transition entries.
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: OrchestratorState TypedDict, jobs.db aiosqlite schema, stub LangGraph graph with AsyncSqliteSaver
-- [ ] 01-02: FastAPI app with lifespan, asyncio.Queue worker, job status transitions wired to stub graph nodes
-- [ ] 01-03: REST endpoints (POST /goals, GET /jobs/{id}/status, GET /jobs/{id}/result, DELETE /jobs/{id}, GET /health), per-run log file setup
+- [ ] 01-01-PLAN.md — OrchestratorState TypedDict + stub graph (research/plan/execute) + jobs.db JobStore; checkpoint-survives-reopen + two empirical-verification tests
+- [ ] 01-02-PLAN.md — FastAPI lifespan (AsyncSqliteSaver yield-inside-async-with) + asyncio.Queue worker + per-job logger + status transitions via astream
+- [ ] 01-03-PLAN.md — REST endpoints (POST /goals 202, status, result, cancel, health) + TestClient test + verify_phase1.sh kill/restart durability proof
 
 ### Phase 2: LLM Nodes
 **Goal**: The Research and Plan nodes produce real LLM outputs using qwen-122b through the LiteLLM proxy, LiteLLM streaming is verified to prevent 504 timeouts, and checkpoint persistence is confirmed across a simulated restart with real data.

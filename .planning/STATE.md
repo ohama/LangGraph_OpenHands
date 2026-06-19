@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 1 of 6 (Foundation)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-06-19 — Completed 01-02-PLAN.md
+Plan: 3 of 3 in current phase (all executed)
+Status: Plans complete — pending phase verification
+Last activity: 2026-06-19 — Completed 01-03-PLAN.md; verify_phase1.sh PASSED (all 5 criteria incl. kill+restart); 18 tests green
 
-Progress: [██░░░░░░░░] 17% (2/12 plans)
+Progress: [██░░░░░░░░] 25% (3/12 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 5 min
-- Total execution time: ~0.1 hours
+- Total plans completed: 3
+- Average duration: ~5 min (excl. post-run verification debugging)
+- Total execution time: ~0.25 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 2/3 | 10 min | 5 min |
+| 1. Foundation | 3/3 | ~15 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min), 01-02 (5 min)
+- Last 5 plans: 01-01 (5 min), 01-02 (5 min), 01-03 (5 min + verify debug)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -53,6 +53,8 @@ Recent decisions affecting current work:
 - 01-02: asyncio.Queue worker is the ONLY graph invocation path; never FastAPI BackgroundTasks.
 - 01-02: _get_job_logger propagate=False is critical (OBS-01); prevents duplication to uvicorn root logger.
 - 01-02: On asyncio.CancelledError in worker, reset job to PENDING so Phase 5 can re-enqueue on restart.
+- 01-03: REST contract — POST /goals 202; status/result read ONLY from jobs.db (never checkpoint); cancel returns mid-node caveat string; request_cancel imported lazily in DELETE to avoid import cycle.
+- 01-03: OPERATIONAL — start the service via the venv uvicorn binary directly (.venv/bin/uvicorn), NEVER `uv run uvicorn`. `uv run` spawns uvicorn as a child; killing the wrapper orphans the real server, which keeps holding the port and answers stale requests. Phase 5 launchd must point ProgramArguments at the absolute .venv/bin/uvicorn path. Tooling that stops the service must kill the real process/process-group.
 
 ### Pending Todos
 
@@ -62,9 +64,10 @@ None yet.
 
 - Phase 3 research flag: OpenHands SDK v1.29.0 exact Python config class field names (workspace_base, max_iterations) need verification against SDK source before writing the adapter. Run /gsd:research-phase scoped to OpenHands SDK config API if Phase 3 planning is blocked.
 - Phase 2 validation: Confirm ChatOpenAI.ainvoke() receives a complete response object when streaming is enabled upstream in LiteLLM (not just astream()).
+- ENV HYGIENE: orphaned uvicorn processes from interrupted runs can linger on a port and answer stale requests (caused a confusing intermittent 500 during 01-03 verification). When debugging the service, `pkill -9 -f "uvicorn orchestrator.main:app"` between runs and prefer launching `.venv/bin/uvicorn` directly so PIDs are killable.
 
 ## Session Continuity
 
-Last session: 2026-06-19T06:14:36Z
-Stopped at: Completed 01-02-PLAN.md (runtime engine: FastAPI lifespan + asyncio.Queue worker + per-job logger + cancel plumbing)
+Last session: 2026-06-19
+Stopped at: Phase 1 plans 01-01/01-02/01-03 all complete and committed; verify_phase1.sh PASSED. Ready for phase verification (gsd-verifier) then phase-completion bookkeeping.
 Resume file: None

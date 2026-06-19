@@ -32,7 +32,7 @@ Build a single-process, always-on macOS service that takes a goal, runs it throu
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — OrchestratorState TypedDict + stub graph (research/plan/execute) + jobs.db JobStore; checkpoint-survives-reopen + two empirical-verification tests
+- [x] 01-01-PLAN.md — OrchestratorState TypedDict + stub graph (research/plan/execute) + jobs.db JobStore; checkpoint-survives-reopen + two empirical-verification tests
 - [ ] 01-02-PLAN.md — FastAPI lifespan (AsyncSqliteSaver yield-inside-async-with) + asyncio.Queue worker + per-job logger + status transitions via astream
 - [ ] 01-03-PLAN.md — REST endpoints (POST /goals 202, status, result, cancel, health) + TestClient test + verify_phase1.sh kill/restart durability proof
 
@@ -116,7 +116,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 1/3 | In progress | - |
 | 2. LLM Nodes | 0/2 | Not started | - |
 | 3. OpenHands Execute | 0/3 | Not started | - |
 | 4. Memory Management | 0/1 | Not started | - |

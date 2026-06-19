@@ -42,15 +42,15 @@ class JobStore:
     def _now(self) -> str:
         return datetime.now(timezone.utc).isoformat()
 
-    async def _connect(self) -> aiosqlite.Connection:
-        conn = await aiosqlite.connect(self.db_path)
+    async def _setup_conn(self, conn: aiosqlite.Connection) -> None:
+        """Apply WAL + NORMAL synchronous on a freshly opened connection."""
         await conn.execute("PRAGMA journal_mode=WAL")
         await conn.execute("PRAGMA synchronous=NORMAL")  # faster than FULL; safe with WAL
-        return conn
 
     async def create_job(self, job_id: str, goal: str) -> None:
         now = self._now()
-        async with await self._connect() as conn:
+        async with aiosqlite.connect(self.db_path) as conn:
+            await self._setup_conn(conn)
             await conn.execute(
                 "INSERT INTO jobs (id, goal, status, created_at, updated_at) VALUES (?,?,?,?,?)",
                 (job_id, goal, "PENDING", now, now),
@@ -58,7 +58,8 @@ class JobStore:
             await conn.commit()
 
     async def set_status(self, job_id: str, status: str) -> None:
-        async with await self._connect() as conn:
+        async with aiosqlite.connect(self.db_path) as conn:
+            await self._setup_conn(conn)
             await conn.execute(
                 "UPDATE jobs SET status=?, updated_at=? WHERE id=?",
                 (status, self._now(), job_id),
@@ -66,7 +67,8 @@ class JobStore:
             await conn.commit()
 
     async def set_complete(self, job_id: str, result: str | None) -> None:
-        async with await self._connect() as conn:
+        async with aiosqlite.connect(self.db_path) as conn:
+            await self._setup_conn(conn)
             await conn.execute(
                 "UPDATE jobs SET status='DONE', result=?, updated_at=? WHERE id=?",
                 (result, self._now(), job_id),
@@ -74,7 +76,8 @@ class JobStore:
             await conn.commit()
 
     async def set_failed(self, job_id: str, error: str) -> None:
-        async with await self._connect() as conn:
+        async with aiosqlite.connect(self.db_path) as conn:
+            await self._setup_conn(conn)
             await conn.execute(
                 "UPDATE jobs SET status='FAILED', error=?, updated_at=? WHERE id=?",
                 (error, self._now(), job_id),
@@ -82,7 +85,8 @@ class JobStore:
             await conn.commit()
 
     async def get_job(self, job_id: str) -> dict | None:
-        async with await self._connect() as conn:
+        async with aiosqlite.connect(self.db_path) as conn:
+            await self._setup_conn(conn)
             conn.row_factory = aiosqlite.Row
             async with conn.execute(
                 "SELECT * FROM jobs WHERE id=?", (job_id,)
@@ -91,7 +95,8 @@ class JobStore:
                 return dict(row) if row else None
 
     async def get_jobs_by_status(self, status: str) -> list[dict]:
-        async with await self._connect() as conn:
+        async with aiosqlite.connect(self.db_path) as conn:
+            await self._setup_conn(conn)
             conn.row_factory = aiosqlite.Row
             async with conn.execute(
                 "SELECT * FROM jobs WHERE status=?", (status,)

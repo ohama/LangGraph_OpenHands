@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 ## Current Position
 
 Phase: 1 of 6 (Foundation)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-06-19 — Completed 01-01-PLAN.md
+Last activity: 2026-06-19 — Completed 01-02-PLAN.md
 
-Progress: [█░░░░░░░░░] 8% (1/12 plans)
+Progress: [██░░░░░░░░] 17% (2/12 plans)
 
 ## Performance Metrics
 
@@ -27,11 +27,11 @@ Progress: [█░░░░░░░░░] 8% (1/12 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 1/3 | 5 min | 5 min |
+| 1. Foundation | 2/3 | 10 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min)
-- Trend: —
+- Last 5 plans: 01-01 (5 min), 01-02 (5 min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -49,6 +49,10 @@ Recent decisions affecting current work:
 - 01-01: EMPIRICAL — Resume with None skips completed nodes; resume with initial_state re-runs all nodes. Phase 5 PERSIST-03 must use None.
 - 01-01: EMPIRICAL — astream(stream_mode="updates") chunks are {node_name_str: partial_state_dict}; no namespace wrapping. 01-02 worker loop confirmed safe.
 - 01-01: aiosqlite.connect() must be used as async context manager directly, not pre-awaited then re-entered (thread-reuse RuntimeError).
+- 01-02: FastAPI lifespan yield MUST be inside async with AsyncSqliteSaver.from_conn_string() — proven structurally via inspect.getsource index assertion.
+- 01-02: asyncio.Queue worker is the ONLY graph invocation path; never FastAPI BackgroundTasks.
+- 01-02: _get_job_logger propagate=False is critical (OBS-01); prevents duplication to uvicorn root logger.
+- 01-02: On asyncio.CancelledError in worker, reset job to PENDING so Phase 5 can re-enqueue on restart.
 
 ### Pending Todos
 
@@ -61,6 +65,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-19T06:06:04Z
-Stopped at: Completed 01-01-PLAN.md (data foundation: OrchestratorState + stub graph + JobStore + tests)
+Last session: 2026-06-19T06:14:36Z
+Stopped at: Completed 01-02-PLAN.md (runtime engine: FastAPI lifespan + asyncio.Queue worker + per-job logger + cancel plumbing)
 Resume file: None

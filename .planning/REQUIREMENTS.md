@@ -94,13 +94,45 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by roadmapper) | — | Pending |
+| ORCH-01 | Phase 3 — OpenHands Execute | Pending |
+| ORCH-02 | Phase 2 — LLM Nodes | Pending |
+| ORCH-03 | Phase 2 — LLM Nodes | Pending |
+| ORCH-04 | Phase 1 — Foundation | Pending |
+| ORCH-05 | Phase 2 — LLM Nodes | Pending |
+| EXEC-01 | Phase 3 — OpenHands Execute | Pending |
+| EXEC-02 | Phase 3 — OpenHands Execute | Pending |
+| EXEC-03 | Phase 3 — OpenHands Execute | Pending |
+| EXEC-04 | Phase 3 — OpenHands Execute | Pending |
+| EXEC-05 | Phase 3 — OpenHands Execute | Pending |
+| PERSIST-01 | Phase 1 — Foundation | Pending |
+| PERSIST-02 | Phase 1 — Foundation | Pending |
+| PERSIST-03 | Phase 5 — launchd Packaging | Pending |
+| API-01 | Phase 1 — Foundation | Pending |
+| API-02 | Phase 1 — Foundation | Pending |
+| API-03 | Phase 1 — Foundation | Pending |
+| API-04 | Phase 1 — Foundation | Pending |
+| API-05 | Phase 1 — Foundation | Pending |
+| API-06 | Phase 1 — Foundation | Pending |
+| CLI-01 | Phase 6 — CLI Client | Pending |
+| CLI-02 | Phase 6 — CLI Client | Pending |
+| CLI-03 | Phase 6 — CLI Client | Pending |
+| CLI-04 | Phase 6 — CLI Client | Pending |
+| OPS-01 | Phase 5 — launchd Packaging | Pending |
+| OPS-02 | Phase 5 — launchd Packaging | Pending |
+| OPS-03 | Phase 5 — launchd Packaging | Pending |
+| OPS-04 | Phase 5 — launchd Packaging | Pending |
+| OPS-05 | Phase 4 — Memory Management | Pending |
+| OBS-01 | Phase 1 — Foundation | Pending |
+| OBS-02 | Phase 3 — OpenHands Execute | Pending |
+| OBS-03 | Phase 2 — LLM Nodes | Pending |
 
 **Coverage:**
-- v1 requirements: 27 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 27 ⚠️
+- v1 requirements: 31 total (5 ORCH + 5 EXEC + 3 PERSIST + 6 API + 4 CLI + 5 OPS + 3 OBS)
+- Mapped to phases: 31
+- Unmapped: 0 ✓
+
+**Note:** The orchestrator file header listed 27 but the actual requirement count is 31 (the API and OPS categories each have more entries than the header implied). All 31 are mapped.
 
 ---
 *Requirements defined: 2026-06-19*
-*Last updated: 2026-06-19 after initial definition*
+*Last updated: 2026-06-19 — traceability populated by roadmapper*

@@ -97,22 +97,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORCH-01 | Phase 3 — OpenHands Execute | Pending |
 | ORCH-02 | Phase 2 — LLM Nodes | Pending |
 | ORCH-03 | Phase 2 — LLM Nodes | Pending |
-| ORCH-04 | Phase 1 — Foundation | Pending |
+| ORCH-04 | Phase 1 — Foundation | Complete |
 | ORCH-05 | Phase 2 — LLM Nodes | Pending |
 | EXEC-01 | Phase 3 — OpenHands Execute | Pending |
 | EXEC-02 | Phase 3 — OpenHands Execute | Pending |
 | EXEC-03 | Phase 3 — OpenHands Execute | Pending |
 | EXEC-04 | Phase 3 — OpenHands Execute | Pending |
 | EXEC-05 | Phase 3 — OpenHands Execute | Pending |
-| PERSIST-01 | Phase 1 — Foundation | Pending |
-| PERSIST-02 | Phase 1 — Foundation | Pending |
+| PERSIST-01 | Phase 1 — Foundation | Complete |
+| PERSIST-02 | Phase 1 — Foundation | Complete |
 | PERSIST-03 | Phase 5 — launchd Packaging | Pending |
-| API-01 | Phase 1 — Foundation | Pending |
-| API-02 | Phase 1 — Foundation | Pending |
-| API-03 | Phase 1 — Foundation | Pending |
-| API-04 | Phase 1 — Foundation | Pending |
-| API-05 | Phase 1 — Foundation | Pending |
-| API-06 | Phase 1 — Foundation | Pending |
+| API-01 | Phase 1 — Foundation | Complete |
+| API-02 | Phase 1 — Foundation | Complete |
+| API-03 | Phase 1 — Foundation | Complete |
+| API-04 | Phase 1 — Foundation | Complete |
+| API-05 | Phase 1 — Foundation | Complete |
+| API-06 | Phase 1 — Foundation | Complete |
 | CLI-01 | Phase 6 — CLI Client | Pending |
 | CLI-02 | Phase 6 — CLI Client | Pending |
 | CLI-03 | Phase 6 — CLI Client | Pending |
@@ -122,7 +122,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OPS-03 | Phase 5 — launchd Packaging | Pending |
 | OPS-04 | Phase 5 — launchd Packaging | Pending |
 | OPS-05 | Phase 4 — Memory Management | Pending |
-| OBS-01 | Phase 1 — Foundation | Pending |
+| OBS-01 | Phase 1 — Foundation | Complete |
 | OBS-02 | Phase 3 — OpenHands Execute | Pending |
 | OBS-03 | Phase 2 — LLM Nodes | Pending |
 

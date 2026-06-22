@@ -45,11 +45,11 @@ Plans:
   2. `plan_node` takes the research findings and goal and produces an actionable plan in graph state using qwen-122b — the plan text is visible in the job status response.
   3. A `curl` test generating more than 90 seconds of 122B output completes without a 504 — confirming streaming is enabled end-to-end before any real workload.
   4. After a simulated restart mid-job (process killed after Research completes), the resumed run skips Research and starts from Plan — node attribution (model name per node) is recorded in state.
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: graph/llm.py make_llm() factory; research_node and plan_node with ChatOpenAI base_url=localhost:4000/v1; per-node model attribution in state
-- [ ] 02-02: LiteLLM streaming validation (curl smoke test >90s); checkpoint resume test; LiteLLM unavailability handling
+- [ ] 02-01-PLAN.md — make_llm() factory (env base_url/model, ORCH-05); real research_node + plan_node via qwen-122b; node_models OBS-03 merge field; result API exposes plan; build_test_graph() keeps Phase 1 tests offline
+- [ ] 02-02-PLAN.md — checkpoints.db reset; >90s no-504 LiteLLM smoke script; resume-with-real-data pytest + live kill-after-research resume script; LiteLLM-unavailable clean-FAILED handling
 
 ### Phase 3: OpenHands Execute
 **Goal**: The Execute node drives the OpenHands SDK in-process on qwen-35b, never blocks the event loop, writes artifacts to an isolated per-job workspace, enforces a max-iterations cap, and the full Research → Plan → Execute pipeline completes autonomously end-to-end.
@@ -117,7 +117,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | ✓ Complete | 2026-06-19 |
-| 2. LLM Nodes | 0/2 | Not started | - |
+| 2. LLM Nodes | 0/2 | Planned | - |
 | 3. OpenHands Execute | 0/3 | Not started | - |
 | 4. Memory Management | 0/1 | Not started | - |
 | 5. launchd Packaging | 0/2 | Not started | - |

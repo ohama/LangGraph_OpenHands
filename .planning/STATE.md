@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-06-19)
 
 ## Current Position
 
-Phase: 1 of 6 (Foundation)
-Plan: 3 of 3 in current phase (all executed)
-Status: Plans complete — pending phase verification
-Last activity: 2026-06-19 — Completed 01-03-PLAN.md; verify_phase1.sh PASSED (all 5 criteria incl. kill+restart); 18 tests green
+Phase: 2 of 6 (LLM Nodes)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-06-23 — Completed 02-01-PLAN.md; real LLM nodes + offline test split + result API enrichment; 18 tests green
 
-Progress: [██░░░░░░░░] 25% (3/12 plans)
+Progress: [███░░░░░░░] 33% (4/12 plans)
 
 ## Performance Metrics
 
@@ -55,6 +55,10 @@ Recent decisions affecting current work:
 - 01-02: On asyncio.CancelledError in worker, reset job to PENDING so Phase 5 can re-enqueue on restart.
 - 01-03: REST contract — POST /goals 202; status/result read ONLY from jobs.db (never checkpoint); cancel returns mid-node caveat string; request_cancel imported lazily in DELETE to avoid import cycle.
 - 01-03: OPERATIONAL — start the service via the venv uvicorn binary directly (.venv/bin/uvicorn), NEVER `uv run uvicorn`. `uv run` spawns uvicorn as a child; killing the wrapper orphans the real server, which keeps holding the port and answers stale requests. Phase 5 launchd must point ProgramArguments at the absolute .venv/bin/uvicorn path. Tooling that stops the service must kill the real process/process-group.
+- 02-01: make_llm() reads LITELLM_BASE_URL + RESEARCH_MODEL/PLAN_MODEL from env (ORCH-05); streaming=False; max_retries=0; api_key="dummy". Never instantiated at module level.
+- 02-01: node_models Annotated[dict, _merge_dicts] is BOUNDED (3 entries max); seeded as {} in initial_state (never None); OBS-03 / ORCH-04 compliant.
+- 02-01: build_test_graph() (all-stub, offline) vs build_stub_graph() (real LLM nodes); ORCHESTRATOR_TEST_GRAPH=1 env flag selects test graph in main.py lifespan. Phase 3 tests MUST set this flag.
+- 02-01: aget_state() enrichment in GET /jobs/{id}/result is best-effort (exception swallowed); result from jobs.db is the authoritative contract.
 
 ### Pending Todos
 
@@ -68,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-19
-Stopped at: Phase 1 plans 01-01/01-02/01-03 all complete and committed; verify_phase1.sh PASSED. Ready for phase verification (gsd-verifier) then phase-completion bookkeeping.
+Last session: 2026-06-23
+Stopped at: Completed 02-01-PLAN.md; 18 tests green offline; ready for 02-02 (live qwen-122b proof)
 Resume file: None

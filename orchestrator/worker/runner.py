@@ -142,6 +142,7 @@ async def worker_loop(
                 "execution_result": None,
                 "execution_status": None,
                 "event_log": [],
+                "node_models": {},  # OBS-03: empty dict, NOT None (merge reducer requires dict)
             }
 
             # astream yields one chunk per completed node.

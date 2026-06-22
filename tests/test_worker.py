@@ -17,7 +17,7 @@ import uuid
 import pytest
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
-from orchestrator.graph.stub_graph import build_stub_graph
+from orchestrator.graph.stub_graph import build_test_graph
 from orchestrator.persistence.job_store import JobStore, init_jobs_db
 from orchestrator.worker.runner import worker_loop
 
@@ -81,7 +81,7 @@ async def test_worker_drives_status_to_done_and_writes_log():
         # 2. Open AsyncSqliteSaver, compile graph
         async with AsyncSqliteSaver.from_conn_string(ckpt_path) as saver:
             await saver.setup()
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
 
             # 3. Create job row in jobs.db BEFORE enqueuing (Pitfall 2: create_job first)
             await store.create_job(job_id, goal)

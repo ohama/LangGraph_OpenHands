@@ -25,7 +25,7 @@ import tempfile
 import pytest
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
-from orchestrator.graph.stub_graph import build_stub_graph
+from orchestrator.graph.stub_graph import build_test_graph
 
 
 def _make_initial_state(job_id: str) -> dict:
@@ -38,6 +38,7 @@ def _make_initial_state(job_id: str) -> dict:
         "execution_result": None,
         "execution_status": None,
         "event_log": [],
+        "node_models": {},  # OBS-03: empty dict required; merge reducer needs a dict, not None
     }
 
 
@@ -56,7 +57,7 @@ async def test_stub_graph_completes_and_checkpoints():
         initial = _make_initial_state("persist-01-test")
 
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             result = await graph.ainvoke(initial, config=config)
 
         # Verify in-run result
@@ -66,7 +67,7 @@ async def test_stub_graph_completes_and_checkpoints():
 
         # PERSIST-01: Re-open DB with a fresh saver (simulates process restart)
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver2:
-            graph2 = build_stub_graph().compile(checkpointer=saver2)
+            graph2 = build_test_graph().compile(checkpointer=saver2)
             state = await graph2.aget_state(config)
             assert state.values["execution_result"] == "STUB: execution complete"
             assert state.values["execution_status"] == "success"
@@ -94,7 +95,7 @@ async def test_empirical_resume_none_vs_initial_state():
 
         # First run: complete the graph
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             first_result = await graph.ainvoke(initial, config=config)
 
         assert first_result["execution_result"] == "STUB: execution complete"
@@ -104,7 +105,7 @@ async def test_empirical_resume_none_vs_initial_state():
         # --- Pattern A: Resume with None as input ---
         # Expected: graph detects completed checkpoint, does NOT re-run any node
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             none_chunks = []
             async for chunk in graph.astream(None, config, stream_mode="updates"):
                 none_chunks.append(chunk)
@@ -112,7 +113,7 @@ async def test_empirical_resume_none_vs_initial_state():
 
         # Retrieve state after resume-with-None
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             state_after_none = await graph.aget_state(config)
 
         none_log_len = len(state_after_none.values["event_log"])
@@ -121,14 +122,14 @@ async def test_empirical_resume_none_vs_initial_state():
         # --- Pattern B: Resume with initial_state as input ---
         # Test on same thread_id to see if it re-merges or re-runs
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             initial_state_chunks = []
             async for chunk in graph.astream(initial, config, stream_mode="updates"):
                 initial_state_chunks.append(chunk)
                 print(f"[resume-initial_state chunk]: {chunk}")
 
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             state_after_initial = await graph.aget_state(config)
 
         initial_state_log_len = len(state_after_initial.values["event_log"])
@@ -178,7 +179,7 @@ async def test_empirical_astream_chunk_key_format():
 
         chunks = []
         async with AsyncSqliteSaver.from_conn_string(db_path) as saver:
-            graph = build_stub_graph().compile(checkpointer=saver)
+            graph = build_test_graph().compile(checkpointer=saver)
             async for chunk in graph.astream(initial, config, stream_mode="updates"):
                 print(f"[astream chunk]: {chunk}")  # Visible with -s flag
                 chunks.append(chunk)

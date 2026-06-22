@@ -20,7 +20,7 @@ from fastapi import FastAPI
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 from orchestrator.api.routes import router
-from orchestrator.graph.stub_graph import build_stub_graph
+from orchestrator.graph.stub_graph import build_stub_graph, build_test_graph
 from orchestrator.persistence.job_store import init_jobs_db
 from orchestrator.worker.runner import worker_loop
 
@@ -61,7 +61,13 @@ async def lifespan(app: FastAPI):
         await saver.setup()
 
         # 3. Compile graph once; checkpointer is baked in and reused across all jobs.
-        graph = build_stub_graph().compile(checkpointer=saver)
+        #    ORCHESTRATOR_TEST_GRAPH=1 selects the all-stub graph for offline tests so
+        #    unit tests never make real LLM calls (test_api.py sets this flag via env).
+        if os.getenv("ORCHESTRATOR_TEST_GRAPH") == "1":
+            graph_builder = build_test_graph   # all-stub, no network (tests)
+        else:
+            graph_builder = build_stub_graph   # real qwen-122b nodes (production)
+        graph = graph_builder().compile(checkpointer=saver)
         app.state.graph = graph
 
         # 4. Create a single shared asyncio.Queue and start one worker coroutine.

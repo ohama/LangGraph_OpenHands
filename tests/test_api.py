@@ -43,8 +43,12 @@ def _make_client():
         # Override env vars so the app (main.py + routes.py) uses isolated dirs.
         old_data = os.environ.get("DATA_DIR")
         old_log = os.environ.get("LOG_DIR")
+        old_test_graph = os.environ.get("ORCHESTRATOR_TEST_GRAPH")
         os.environ["DATA_DIR"] = data_dir
         os.environ["LOG_DIR"] = log_dir
+        # ORCHESTRATOR_TEST_GRAPH=1: lifespan compiles build_test_graph() (all-stub)
+        # so the API tests never make real LLM calls and run fully offline.
+        os.environ["ORCHESTRATOR_TEST_GRAPH"] = "1"
 
         try:
             # Import app AFTER env is set so DATA_DIR is picked up at import time.
@@ -64,6 +68,11 @@ def _make_client():
                 os.environ.pop("LOG_DIR", None)
             else:
                 os.environ["LOG_DIR"] = old_log
+
+            if old_test_graph is None:
+                os.environ.pop("ORCHESTRATOR_TEST_GRAPH", None)
+            else:
+                os.environ["ORCHESTRATOR_TEST_GRAPH"] = old_test_graph
 
             # Clean up temp dir
             import shutil

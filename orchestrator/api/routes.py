@@ -77,10 +77,13 @@ async def get_status(job_id: str):
 # ---------------------------------------------------------------------------
 
 @router.get("/jobs/{job_id}/result", response_model=JobResultResponse)
-async def get_result(job_id: str):
+async def get_result(job_id: str, request: Request):
     """Return execution result for a DONE job.
 
     Returns 404 for unknown job_id and 409 if the job is not yet DONE.
+    After the DONE guard, reads plan and research_findings from the checkpoint
+    via app.state.graph.aget_state(). The checkpoint enrichment is best-effort:
+    if aget_state raises, the result field from jobs.db is still returned.
     """
     store = JobStore(_jobs_db_path())
     job = await store.get_job(job_id)
@@ -91,7 +94,24 @@ async def get_result(job_id: str):
             status_code=409,
             detail=f"Job status is {job['status']}, not DONE",
         )
-    return JobResultResponse(job_id=job_id, result=job["result"])
+    # Read plan and research_findings from the checkpoint (best-effort).
+    plan: str | None = None
+    research: str | None = None
+    try:
+        config = {"configurable": {"thread_id": job_id}}
+        snapshot = await request.app.state.graph.aget_state(config)
+        values = snapshot.values if snapshot else {}
+        plan = values.get("plan")
+        research = values.get("research_findings")
+    except Exception:
+        # Checkpoint enrichment is best-effort; result from jobs.db is the contract.
+        pass
+    return JobResultResponse(
+        job_id=job_id,
+        result=job["result"],
+        plan=plan,
+        research_findings=research,
+    )
 
 
 # ---------------------------------------------------------------------------

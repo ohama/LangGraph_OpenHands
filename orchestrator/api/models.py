@@ -24,7 +24,11 @@ class JobResultResponse(BaseModel):
     """Response body for GET /jobs/{job_id}/result.
 
     result is None until the job reaches DONE status.
+    plan and research_findings are populated from the checkpoint when available;
+    they are None for stub runs (build_test_graph) or if aget_state fails.
     """
 
     job_id: str
     result: str | None
+    plan: str | None = None
+    research_findings: str | None = None

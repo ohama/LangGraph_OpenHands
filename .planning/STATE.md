@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-06-19)
 
 **Core value:** A goal submitted to an always-on local service is autonomously Researched → Planned → Executed end-to-end by local agents, surviving reboots.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — LLM Nodes
 
 ## Current Position
 
 Phase: 2 of 6 (LLM Nodes)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-06-23 — Completed 02-01-PLAN.md; real LLM nodes + offline test split + result API enrichment; 18 tests green
+Plan: 2 of 2 in current phase (all executed; live checkpoint approved)
+Status: Plans complete — pending phase verification
+Last activity: 2026-06-23 — Executed 02-01 (real nodes, offline split) + 02-02 (live proofs); criterion 3 (144s, no 504) & criterion 4 (resume skips research, node_models survives) PASSED; 20 tests green
 
-Progress: [███░░░░░░░] 33% (4/12 plans)
+Progress: [████░░░░░░] 42% (5/12 plans)
 
 ## Performance Metrics
 
@@ -59,6 +59,11 @@ Recent decisions affecting current work:
 - 02-01: node_models Annotated[dict, _merge_dicts] is BOUNDED (3 entries max); seeded as {} in initial_state (never None); OBS-03 / ORCH-04 compliant.
 - 02-01: build_test_graph() (all-stub, offline) vs build_stub_graph() (real LLM nodes); ORCHESTRATOR_TEST_GRAPH=1 env flag selects test graph in main.py lifespan. Phase 3 tests MUST set this flag.
 - 02-01: aget_state() enrichment in GET /jobs/{id}/result is best-effort (exception swallowed); result from jobs.db is the authoritative contract.
+- 02-02: EMPIRICAL — RESOLVED the 504 question. LiteLLM 1.86.1 has NO 504 on long non-streaming calls (proved 144s/6000-token generation, HTTP 200). ChatOpenAI.ainvoke() returns a COMPLETE response regardless of streaming flag. Use streaming=False.
+- 02-02: EMPIRICAL — node_models attribution {research:qwen-122b, plan:qwen-122b} survives AsyncSqliteSaver reopen; resume via astream(None) runs plan+execute only (research NOT re-called) with real data.
+- 02-02: B4 — the inline resume must run with the live service STOPPED (single writer on checkpoints.db); two AsyncSqliteSaver writers on one file → lock/hang. Automatic startup resume is Phase 5 (PERSIST-03).
+- 02-02: dead-LiteLLM path proven clean FAILED (APIConnectionError→RuntimeError→set_failed, <1s, max_retries=0, no hang). Phase 5 OPS-03 lazy probe builds on this.
+- 02-02: PORT — orchestrator must NOT use :8000 (qwen-35b), :8001 (qwen-122b), :4000 (LiteLLM). resume_real_data.sh used :8080; verify_phase1.sh used :8099. Phase 5 plist must pick a stable non-colliding port.
 
 ### Pending Todos
 
@@ -67,8 +72,8 @@ None yet.
 ### Blockers/Concerns
 
 - Phase 3 research flag: OpenHands SDK v1.29.0 exact Python config class field names (workspace_base, max_iterations) need verification against SDK source before writing the adapter. Run /gsd:research-phase scoped to OpenHands SDK config API if Phase 3 planning is blocked.
-- Phase 2 validation: Confirm ChatOpenAI.ainvoke() receives a complete response object when streaming is enabled upstream in LiteLLM (not just astream()).
-- ENV HYGIENE: orphaned uvicorn processes from interrupted runs can linger on a port and answer stale requests (caused a confusing intermittent 500 during 01-03 verification). When debugging the service, `pkill -9 -f "uvicorn orchestrator.main:app"` between runs and prefer launching `.venv/bin/uvicorn` directly so PIDs are killable.
+- ENV HYGIENE: orphaned uvicorn processes from interrupted runs can linger on a port and answer stale requests (caused a confusing intermittent 500 during 01-03 verification, and qwen-122b can wedge with a metal::malloc error — respawn via `launchctl kickstart -k gui/501/com.ohama.qwen122b`). When debugging the service, `pkill -9 -f "uvicorn orchestrator.main:app"` between runs and prefer launching `.venv/bin/uvicorn` directly.
+- RESOLVED (was Phase 2 validation): ChatOpenAI.ainvoke() DOES return a complete response with LiteLLM upstream; no streaming needed (see 02-02 empirical above).
 
 ## Session Continuity
 

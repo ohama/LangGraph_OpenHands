@@ -11,7 +11,7 @@ Build a single-process, always-on macOS service that takes a goal, runs it throu
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Foundation** - Types, persistence, FastAPI service scaffold with stub graph and asyncio.Queue worker ✓ verified 2026-06-19
-- [ ] **Phase 2: LLM Nodes** - Real research and plan nodes calling qwen-122b via LiteLLM; validate streaming/timeout fix
+- [x] **Phase 2: LLM Nodes** - Real research and plan nodes calling qwen-122b via LiteLLM; validate streaming/timeout fix ✓ verified 2026-06-23
 - [ ] **Phase 3: OpenHands Execute** - In-process SDK adapter, asyncio.to_thread wrap, workspace isolation, max_iterations cap
 - [ ] **Phase 4: Memory Management** - Measure dual-model pressure; wire launchctl 122B unload between Plan and Execute
 - [ ] **Phase 5: launchd Packaging** - com.ohama.orchestrator plist, lazy LiteLLM probe, SIGTERM handler, startup resume scan
@@ -48,8 +48,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — make_llm() factory (env base_url/model, ORCH-05); real research_node + plan_node via qwen-122b; node_models OBS-03 merge field; result API exposes plan; build_test_graph() keeps Phase 1 tests offline
-- [ ] 02-02-PLAN.md — checkpoints.db reset; >90s no-504 LiteLLM smoke script; resume-with-real-data pytest + live kill-after-research resume script; LiteLLM-unavailable clean-FAILED handling
+- [x] 02-01-PLAN.md — make_llm() factory (env base_url/model, ORCH-05); real research_node + plan_node via qwen-122b; node_models OBS-03 merge field; result API exposes plan; build_test_graph() keeps Phase 1 tests offline
+- [x] 02-02-PLAN.md — checkpoints.db reset; >90s no-504 LiteLLM smoke script; resume-with-real-data pytest + live kill-after-research resume script; LiteLLM-unavailable clean-FAILED handling
 
 ### Phase 3: OpenHands Execute
 **Goal**: The Execute node drives the OpenHands SDK in-process on qwen-35b, never blocks the event loop, writes artifacts to an isolated per-job workspace, enforces a max-iterations cap, and the full Research → Plan → Execute pipeline completes autonomously end-to-end.
@@ -117,7 +117,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | ✓ Complete | 2026-06-19 |
-| 2. LLM Nodes | 0/2 | Planned | - |
+| 2. LLM Nodes | 2/2 | ✓ Complete | 2026-06-23 |
 | 3. OpenHands Execute | 0/3 | Not started | - |
 | 4. Memory Management | 0/1 | Not started | - |
 | 5. launchd Packaging | 0/2 | Not started | - |

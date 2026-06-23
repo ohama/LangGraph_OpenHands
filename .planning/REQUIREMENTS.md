@@ -95,10 +95,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ORCH-01 | Phase 3 — OpenHands Execute | Pending |
-| ORCH-02 | Phase 2 — LLM Nodes | Pending |
-| ORCH-03 | Phase 2 — LLM Nodes | Pending |
+| ORCH-02 | Phase 2 — LLM Nodes | Complete |
+| ORCH-03 | Phase 2 — LLM Nodes | Complete |
 | ORCH-04 | Phase 1 — Foundation | Complete |
-| ORCH-05 | Phase 2 — LLM Nodes | Pending |
+| ORCH-05 | Phase 2 — LLM Nodes | Complete |
 | EXEC-01 | Phase 3 — OpenHands Execute | Pending |
 | EXEC-02 | Phase 3 — OpenHands Execute | Pending |
 | EXEC-03 | Phase 3 — OpenHands Execute | Pending |
@@ -124,7 +124,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OPS-05 | Phase 4 — Memory Management | Pending |
 | OBS-01 | Phase 1 — Foundation | Complete |
 | OBS-02 | Phase 3 — OpenHands Execute | Pending |
-| OBS-03 | Phase 2 — LLM Nodes | Pending |
+| OBS-03 | Phase 2 — LLM Nodes | Complete |
 
 **Coverage:**
 - v1 requirements: 31 total (5 ORCH + 5 EXEC + 3 PERSIST + 6 API + 4 CLI + 5 OPS + 3 OBS)

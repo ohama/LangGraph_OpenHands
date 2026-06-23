@@ -61,12 +61,12 @@ Plans:
   3. Each job's artifacts (`research.md`, `plan.md`, `execution_transcript.jsonl`) are written to a per-job workspace directory (`~/projs/langgraph-jobs/<job_id>/workspace/`) — the orchestrator's own source files are never modified.
   4. An Execute run that would otherwise loop indefinitely terminates at the configured max-iterations cap and transitions to DONE (or FAILED) rather than running forever.
   5. Importing the OpenHands SDK occurs only inside `execution/openhands_adapter.py` — the execute_node can be tested with the adapter swapped for a stub without importing `openhands.*`.
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: execution/openhands_adapter.py with asyncio.to_thread wrap, per-job workspace_base, max_iterations config, loop-detection logic
-- [ ] 03-02: execute_node wired into graph; intermediate artifact writes (research.md, plan.md, execution_transcript.jsonl); SDK error propagation to job status
-- [ ] 03-03: End-to-end integration test: submit goal → verify DONE status, workspace files written, event loop responsive during Execute
+- [ ] 03-01-PLAN.md — install pinned openhands-sdk==1.21.0 + openhands-tools==1.21.0, verify imports + standalone qwen-35b smoke proof; execution/openhands_adapter.py (run_openhands/serialize_transcript, the sole openhands.* import boundary, max_iteration_per_run cap)
+- [ ] 03-02-PLAN.md — real async execute_node in build_stub_graph() (asyncio.to_thread + wall-clock timeout, per-job workspace asserted ≠ cwd, research.md/plan.md/summary artifacts, node_models["execute"]); execute_stub kept for build_test_graph(); offline unit tests with run_openhands stubbed
+- [ ] 03-03-PLAN.md — live e2e verify_phase3.sh (PLANNING→EXECUTING→DONE, sub-second status during EXECUTING, workspace artifacts, source-untouched, no-orphan :8099); cap_proof.py (max-iterations→terminal); skippable integration tests; human-verify checkpoint
 
 ### Phase 4: Memory Management
 **Goal**: Dual-model memory pressure is measured with both models loaded simultaneously, and the 122B model is unloaded between Plan and Execute so 35B throughput is not degraded during the Execute phase.
@@ -118,7 +118,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | ✓ Complete | 2026-06-19 |
 | 2. LLM Nodes | 2/2 | ✓ Complete | 2026-06-23 |
-| 3. OpenHands Execute | 0/3 | Not started | - |
+| 3. OpenHands Execute | 0/3 | Planned | - |
 | 4. Memory Management | 0/1 | Not started | - |
 | 5. launchd Packaging | 0/2 | Not started | - |
 | 6. CLI Client | 0/1 | Not started | - |
